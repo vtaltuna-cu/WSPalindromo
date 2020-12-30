@@ -5,20 +5,15 @@
  */
 package Busqueda.model;
 
-//import com.mongodb.util.JSON;
-import com.mongodb.DBCursor;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Filters.regex;
 import static com.mongodb.client.model.Projections.excludeId;
-//import freemarker.core.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.bson.Document;
 
 /**
@@ -30,7 +25,6 @@ public class Oferta {
     private Integer percent = 50;
     public Oferta() {
     }
-    
     
     public Map<String, Object> getProductos(String cadena, Integer pagina, Integer largoPagina){
         
@@ -58,7 +52,7 @@ public class Oferta {
             palindromo = esPalindromo(cadena);
         
         resultado = getProductos(cadena, palindromo, pagina, largoPagina);
-        //resultado.put("productos", listado);
+
         return resultado;
     }
     
@@ -78,13 +72,11 @@ public class Oferta {
         } catch (Exception ex){
             return null;
         }
-        
-       // return null;
     }
     
     private Map<String, Object> getProductos(String cadena, Boolean palindromo, Integer pagina, Integer largoPagina){
         
-        Map<String, Object> resultado = new HashMap<String, Object>();
+        Map<String, Object> resultado = new HashMap<>();
         
         ArrayList<Producto> productos = new ArrayList<>();
         
@@ -97,9 +89,7 @@ public class Oferta {
         FindIterable<Document> it ;
         if (cadena.trim().length()>0){
             it = collection.find(or(regex("brand", cadena), regex("description", cadena))).skip(saltos).limit(largoPagina).projection(excludeId());
-            //collection..find(or(regex("brand", cadena), regex("description", cadena)));
             cantidad = (int)collection.count(or(regex("brand", cadena), regex("description", cadena)));
-            //cantidad = Integer.(itl);
         }
         else {
             it = collection.find().skip(saltos).limit(largoPagina).projection(excludeId());
@@ -110,18 +100,18 @@ public class Oferta {
         resultado.put("pagina", pagina);
         resultado.put("paginas", (int)Math.ceil((double)cantidad/largoPagina));
         
-        ArrayList<Document> docs = new ArrayList<Document>();
+        ArrayList<Document> docs = new ArrayList<>();
 
         it.into(docs);
 
-        for (Document doc : docs) {
+        docs.forEach((doc) -> {
             String brand = (String)doc.get("brand");
             String description = (String)doc.get("description");
             String image = (String)doc.get("image");
             Integer price = (Integer)doc.get("price");
             Integer id = (Integer)doc.get("id");
             productos.add(new Producto(id, brand, description, image, price, palindromo, percent));
-        }
+        });
      
         resultado.put("productos", productos);
         return resultado;

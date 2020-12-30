@@ -22,15 +22,15 @@ public class WS {
 
     /**
      * Web service operation
-     * @param search
-     * @param page
+     * @param search : Texto a buscar
+     * @param page : página
      * @param pageSize
      * @return 
      */
     @WebMethod(operationName = "getProducts")
     public String getProducts(@WebParam(name = "search") String search, @WebParam(name = "page") int page, @WebParam(name = "pageSize") int pageSize) {
-        Map<String, Object> resultado = new HashMap<String, Object>();
+        Map<String, Object> resultado = new HashMap<>();
         resultado = (new Oferta()).getProductos(search, page, pageSize);
-        return /*resultado;//*/new Gson().toJson(resultado);
+        return new Gson().toJson(resultado);
     }
 }
