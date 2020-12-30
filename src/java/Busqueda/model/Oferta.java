@@ -28,6 +28,10 @@ public class Oferta {
     
     public Map<String, Object> getProductos(String cadena, Integer pagina, Integer largoPagina){
         
+        if (cadena==null) cadena = "";
+        if (pagina==null) pagina = 1;
+        if (largoPagina==null) largoPagina = 12;
+        
         Map<String, Object> resultado = new HashMap<String, Object>();
         cadena = cadena.trim();
         
@@ -36,12 +40,16 @@ public class Oferta {
         
         try {
             Integer entero = Integer.parseInt(cadena);
-            palindromo = esPalindromo(cadena);
+            palindromo = entero>10?esPalindromo(cadena):false;
             
             Producto producto = getProducto(entero,palindromo);
             if (producto!= null)
                 listado.add(producto);
             
+            resultado.put("cantidad", producto!=null?1:0);
+            resultado.put("pagina", producto!=null?1:0);
+            resultado.put("paginas", producto!=null?1:0);
+        
             resultado.put("productos", listado);
             return resultado;
         } catch( NumberFormatException ex){
